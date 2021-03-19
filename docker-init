@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+/usr/bin/sudo -u mysql /usr/sbin/mysqld &
+/usr/sbin/apachectl -D FOREGROUND &
+
+wait -n
