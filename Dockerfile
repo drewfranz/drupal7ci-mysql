@@ -1,7 +1,13 @@
 FROM juampynr/drupal7ci:php-7.3
 
+# Install redis
+RUN apt update && apt-get install -y redis-server
+
+# Starting redis server
+RUN service redis-server start
+
 # Install mysql 5.7.
-RUN apt update && apt install -y lsb-release gnupg wget debconf-utils \
+RUN apt install -y lsb-release gnupg wget debconf-utils \
     && echo 'f6a7c41f04cc4fea7ade285092eea77a  mysql-apt-config_0.8.16-1_all.deb' > mysql-apt-config_0.8.16-1_all.deb.md5 \
     && wget https://dev.mysql.com/get/mysql-apt-config_0.8.16-1_all.deb \
     && md5sum -c mysql-apt-config_0.8.16-1_all.deb.md5 \
@@ -42,8 +48,8 @@ RUN printf "#### Install PHP Extensions ####\n" \
 # Copy the init file.
 COPY docker-init /usr/local/bin/
 
-# Expose the default apace2 and mysql ports.
-EXPOSE 80 3306
+# Expose the default apace2, mysql, & redis ports.
+EXPOSE 80 3306 6379
 
 # Setup the healthcheck command
 HEALTHCHECK CMD /usr/bin/mysqladmin ping && /usr/bin/curl --fail http://localhost || exit 1
